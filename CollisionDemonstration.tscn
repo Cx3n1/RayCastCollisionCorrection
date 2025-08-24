@@ -1,0 +1,115 @@
+[gd_scene load_steps=17 format=3 uid="uid://bgtgapmkt17jf"]
+
+[ext_resource type="Script" uid="uid://dtal64jlg8rlk" path="res://CollisionDemonstration.gd" id="1_gfof0"]
+[ext_resource type="Texture2D" uid="uid://codd54wiihj3m" path="res://PrototypeTextures/Orange/texture_02.png" id="2_qpxjq"]
+[ext_resource type="Script" uid="uid://cy50o48424vpi" path="res://RefreshRateLabel.gd" id="3_3dru1"]
+[ext_resource type="Texture2D" uid="uid://dlvp30d34qwbb" path="res://PrototypeTextures/Dark/texture_08.png" id="4_4jdjy"]
+[ext_resource type="Texture2D" uid="uid://df4mx5p3ifhms" path="res://PrototypeTextures/Light/texture_06.png" id="5_sk2w8"]
+[ext_resource type="Texture2D" uid="uid://b34flx8cww00" path="res://PrototypeTextures/Red/texture_01.png" id="6_8qxpm"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_bseuf"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_v5bsx"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_eeomt"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eeomt"]
+albedo_texture = ExtResource("2_qpxjq")
+uv1_scale = Vector3(3, 3, 3)
+
+[sub_resource type="SphereMesh" id="SphereMesh_02hga"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_02hga"]
+albedo_texture = ExtResource("4_4jdjy")
+uv1_scale = Vector3(15, 15, 15)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_vq11b"]
+size = Vector2(200, 100)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bxx0k"]
+albedo_texture = ExtResource("5_sk2w8")
+uv1_scale = Vector3(15, 15, 15)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vq11b"]
+albedo_texture = ExtResource("6_8qxpm")
+
+[sub_resource type="SphereMesh" id="SphereMesh_wvjjl"]
+radius = 0.1
+height = 0.2
+
+[node name="CollisionDemonstration" type="Node3D"]
+
+[node name="FloorCollider" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorCollider"]
+shape = SubResource("WorldBoundaryShape3D_bseuf")
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.06688, 0)
+collision_layer = 3
+collision_mask = 3
+physics_material_override = SubResource("PhysicsMaterial_v5bsx")
+gravity_scale = 0.0
+
+[node name="Controller" type="Node3D" parent="RigidBody3D" node_paths=PackedStringArray("main_body", "collision_ray", "detection_ball", "label")]
+script = ExtResource("1_gfof0")
+main_body = NodePath("..")
+collision_ray = NodePath("../RayCast3D")
+detection_ball = NodePath("../../CollisionPoint")
+label = NodePath("../Label3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("SphereShape3D_eeomt")
+
+[node name="RayCast3D" type="RayCast3D" parent="RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.269204, 0)
+hit_back_faces = false
+collide_with_areas = true
+
+[node name="RemoteTransform3D" type="RemoteTransform3D" parent="RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.05423)
+remote_path = NodePath("../../Camera3D")
+update_rotation = false
+update_scale = false
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
+material_override = SubResource("StandardMaterial3D_eeomt")
+mesh = SubResource("SphereMesh_02hga")
+
+[node name="Label3D" type="Label3D" parent="RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.736902, 0)
+text = "Speed"
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.900687, -0.242872, 0.360246, -0.163848, 0.578062, 0.799374, -0.40239, -0.779011, 0.480858, 0, 10.3279, 14.6056)
+
+[node name="Wall" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -1.21598)
+material_override = SubResource("StandardMaterial3D_02hga")
+mesh = SubResource("PlaneMesh_vq11b")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_bxx0k")
+mesh = SubResource("PlaneMesh_vq11b")
+
+[node name="CollisionPoint" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_vq11b")
+mesh = SubResource("SphereMesh_wvjjl")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.996204, 0.0870514, 0, -0.0870514, 0.996204, 0, 1.06688, 4.05423)
+size = 3.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -123.5
+offset_right = 123.5
+offset_bottom = 103.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 75
+text = "120 HZ"
+script = ExtResource("3_3dru1")
