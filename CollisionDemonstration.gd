@@ -47,15 +47,18 @@ func _physics_process(delta) -> void:
 	main_body.apply_central_force(input_force*delta)
 
 
-## function form
+## function form of collision correction
 ## given collision_ray it will calculate corrected collision point aligned to ray cast
 static func get_corrected_collision_point(collision_ray: RayCast3D) -> Vector3:
-	var collision_point_to_body = collision_ray.global_position - collision_ray.get_collision_point()
+	# ray global position is the position of ray cast base
+	var ray_global_position = collision_ray.global_position
+	var collision_point_to_body = ray_global_position - collision_ray.get_collision_point()
 	
-	var ray_normal = collision_ray.to_global(Vector3.DOWN) - collision_ray.global_position
+	# Vector3.DOWN is already normal, we subtract ray_global_position to move it to global origin
+	var ray_normal = collision_ray.to_global(Vector3.DOWN) - ray_global_position
 	
 	var projected_length = ray_normal.dot(-collision_point_to_body)
-	var corrected_point = projected_length*ray_normal + collision_ray.global_position
+	var corrected_point = projected_length*ray_normal + ray_global_position
 	
 	return corrected_point
 
