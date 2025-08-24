@@ -47,6 +47,18 @@ func _physics_process(delta) -> void:
 	main_body.apply_central_force(input_force*delta)
 
 
+## function form
+## given collision_ray it will calculate corrected collision point aligned to ray cast
+static func get_corrected_collision_point(collision_ray: RayCast3D) -> Vector3:
+	var collision_point_to_body = collision_ray.global_position - collision_ray.get_collision_point()
+	
+	var ray_normal = collision_ray.to_global(Vector3.DOWN) - collision_ray.global_position
+	
+	var projected_length = ray_normal.dot(-collision_point_to_body)
+	var corrected_point = projected_length*ray_normal + collision_ray.global_position
+	
+	return corrected_point
+
 
 func round_to_significant_digits(value: float, digits: int) -> float:
 	if value == 0:
